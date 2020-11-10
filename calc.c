@@ -319,7 +319,7 @@ int smp3_main(int argc, char **argv)
     pthread_detach(adderThread);
     pthread_detach(degrouperThread);
     pthread_detach(sentinelThread);
-    pthread_join(readerThread);
+    pthread_join(readerThread, NULL);
 	/* Step 1: we have to join on the ________ thread. */
 
     /* everything is finished, print out the number of operations performed */
