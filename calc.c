@@ -14,10 +14,14 @@ char buffer[BUF_SIZE];
 int num_ops;
 
 /* Step 3: add mutual exclusion */
+pthread_mutex_t mutexLock = PTHREAD_MUTEX_INITIALIZER;
 
 
 
 /* Step 6: add condition flag varaibles */
+struct progress_t
+{
+}
 
 
 
@@ -153,12 +157,17 @@ void *adder(void *arg)
 
 	// something missing?
 	/* Step 3: free the lock */
+	    pthread_mutex_unlock(&mutexLock);
 
 
 	/* Step 6: check progress */
+	    sem_wait(&progress_lock);
+	    progress.add = sum ? 2: 1;
+	    sem_post(&progress_lock);
 
 
 	/* Step 5: let others play */
+	    sched_yield();
     }
 }
 
@@ -220,8 +229,8 @@ void *degrouper(void *arg)
     while (1) {
 
 		/* Step 3: add mutual exclusion */
-
-
+	  pthread_mutex_lock(&mutexlock);
+	 
 	if (timeToFinish()) {
 	    return NULL;
 	}
@@ -232,12 +241,34 @@ void *degrouper(void *arg)
 	/* Step 2: implement degrouper */
 	for (i = 0; i < bufferlen; i++) {
 	    // check for '(' followed by a naked number followed by ')'
-	    // remove ')' by shifting the tail end of the expression
+	    if (buffer[i] =='{' &&& isNumeric(buffer[i+1])){
+	    startOffset =i;
+		   do{
+		   i++;
+		   }while(isNumeric(buffer[i]));
+		    if (buffer[i]!=')'){
+		    i--;
+		    continue;
+		    }
+	    }
+		// remove ')' by shifting the tail end of the expression
+		strcpy(buffer+i, buffer+i + 1);
+		
 	    // remove '(' by shifting the beginning of the expression
+		strcpy(buffer+startOffset, buffer+startOffset+i);
+		bufferlen -=2;
+		i=startOffset;
+		sum =1;
+		num_ops++;
 	}
 
 	// something missing?
 	/* Step 3: free the lock */
+	    pthread_mutex_unlock(&mutexLock);
+	    sem_wait(&progress_lock);
+	    progress.group = sum ? 2:1;
+	    sem_post(&progress_lock);
+	    sched_yield();
 
 
 	/* Step 6: check progress */
@@ -265,6 +296,7 @@ void *sentinel(void *arg)
     while (1) {
 
 		/* Step 3: add mutual exclusion */
+
 
 	if (timeToFinish()) {
 	    return NULL;
@@ -295,9 +327,25 @@ void *sentinel(void *arg)
 
 	// something missing?
 	/* Step 6: check for progress */
-
+	if(buffer[0]!=0){
+	mpthread_mutex_unlock(&mutexLock);
+		sem_wait(&progress_lock);
+		if(progress.add && progress.mult && progress.group){
+		if(progress.add >1 || progress.multi >1 || progress.group > 1){
+			menset(&progress, 0, sizeof(struct progress_t));
+		}
+			else{
+			printf(stdout, "No Prorgess can be made \n");
+			exit(EXIT_FAILURE);
+			}
+		}
+		sem_post(&progress_lock);
+	}
+		pthread_mutex_unlock(&mutexLock);
 
 	/* Step 5: let others play, too */
+	    schedule yield?
+	    
 
     }
 }
@@ -331,15 +379,28 @@ void *reader(void *arg)
 
 	while (free < newlen) {
 		// spinwaiting TO DO
+		tBuffer[newlen - 1] = tBuffer[newlen];
+		newlen--;
 	}
-
+do{
 	/* Step 3: add mutual exclusion */
+	    pthread_mutex_lock();
+	    currentlen=strlen(buffer);
+	    free = sizeof(buffer)-currentlen-s;
+	    pthread_mutex_unlock(&mutexLock);
+	    sched_yield();
+}while(free < newlen);
+	    pthread_mutex_lock(&mutexLock);
+	    
 
 	/* we can add another expression now */
 	strcat(buffer, tBuffer);
 	strcat(buffer, ";");
 
 	/* Step 6: reset flag variables indicating progress */
+	    sem_wait(&progress_lock);
+	    memset(&progress, 0, sizeof(struct progress_t));
+	    sem
 
 	/* Stop when user enters '.' */
 	if (tBuffer[0] == '.') {
@@ -355,6 +416,7 @@ int smp3_main(int argc, char **argv)
     void *arg = 0;		/* dummy value */
 
 	/* Step 7: use a semaphore */
+	sem_init(&progress_lock, 0, 1);
 
     /* let's create our threads */
     if (pthread_create(&multiplierThread, NULL, multiplier, arg)
@@ -366,17 +428,21 @@ int smp3_main(int argc, char **argv)
     }
 
     /* you need to join one of these threads... but which one? */
+    pthread_join(sentinelThread,NULL);
     pthread_detach(multiplierThread);
     pthread_detach(adderThread);
     pthread_detach(degrouperThread);
     pthread_detach(sentinelThread);
-    pthread_join(readerThread, NULL);
+    pthread_detach(readerThread);
+    
 	/* Step 1: we have to join on the ________ thread. */
 
     /* everything is finished, print out the number of operations performed */
     fprintf(stdout, "Performed a total of %d operations\n", num_ops);
 
 	// TODO destroy semaphores and mutex
+	pthread_mutex_destroy(&mutexLock);
+	sem_destroy(&progress_lock);
 
     return EXIT_SUCCESS;
 }
