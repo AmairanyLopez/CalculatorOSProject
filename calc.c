@@ -14,20 +14,18 @@ char buffer[BUF_SIZE];
 int num_ops;
 
 /* Step 3: add mutual exclusion */
-pthread_mutex_t mutexLock = PTHREAD_MUTEX_INITIALIZER;
-
-
+static pthread_mutex_t mutexLock = PTHREAD_MUTEX_INITIALIZER;
 
 /* Step 6: add condition flag varaibles */
 struct progress_t
 {
-}
-
-
+	int add;
+	int mult;
+	int group;
+}progress;
 
 /* Step 7: use a semaphore */
-
-
+static sem_t progress_lock;
 
 /* Utiltity functions provided for your convenience */
 
@@ -78,63 +76,59 @@ void *adder(void *arg)
     int value1, value2;
     int startOffset, remainderOffset;
     int i;
-    int foundsign = 0;
-    int endops = 0;
-
-    return NULL; /* remove this line */
+    int sum;
+    int result;
+    char nString[50];
 
     while (1) {
 
-		/* Step 3: add mutual exclusion */
-	startOffset = remainderOffset = -1;
-	value1 = value2 = -1;
+	/* Step 3: add mutual exclusion */
+	//startOffset = remainderOffset = -1;
+	//value1 = value2 = -1;
+	    
+	pthread_mutex_lock(&mutexLock);
 
-	if (timeToFinish()) {
+	if (timeToFinish()) 
+	{
+	    pthread_mutex_unlock(&mutexLock);
 	    return NULL;
 	}
 
 	/* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
-	
+	sum=0;
 
 	/* Step 2: implement adder */
-	for (i = 0; i < bufferlen; i++) {
-	    // do we have value1 already?  If not, is this a "naked" number?
-		if (value1 == -1){ //change this to found sign late ***
-			strcpy(value1, buffer[i]);
-			strcpy(startOffset, i);
-			break;
+	for (i = 0; i < bufferlen; i++)
+	{
+		if (buffer[i]== ';')
+		{
+		break;
 		}
-		else if (buffer[i]== '+'){
-			strcpy(foundsign, 1);
-			strcpy(buffer, &buffer[i + 1]);
-			break;
+		if (isNumeric(buffer[i])){
+		startOffset =1;
+		value1= string2int(buffer + i);
+		while (isNumeric(buffer[i]))
+		{
+		i++;
 		}
-		else if (foundsign == 0){
-			char s1[] = to_string(value1);
-			char s2[] = to_string(buffer[i]);
-			char s[] = s1 + s2;
-			int c = stoi(s);
-			strcpy(value1, c);
-			strcpy(buffer, &buffer[i + 1]);
-			break;
+		if (buffer[i] != '+' || !isNumeric(buffer[i+1])){
+		continue;
 		}
-		else if (!isdigit(buffer[i])){
-			goto label;
-		}
-		else if (value2 == -1){
-			strcpy(value2, buffer[i]);
-			strcpy(remainder0ffset, i);
-			break;
-		}
-		else {
-			char s1[] = to_string(value2);
-			char s2[] = to_string(buffer[i]);
-			char s[] = s1 + s2;
-			int c = stoi(s);
-			strcpy(value2, c);
-			strcpy(remainder0ffset, i);
-			break;
+		value2 = string2int(buffer + i +1);
+		result = value1 + value2;
+		do
+		{
+		i++;
+		}while (isNumeric(buffer[i]));
+		remainderOffset =i;
+		int2string(result, nString);
+		strcpy(buffer+ startOffset, nString);
+		strcpy(buffer + startOffset + strlen(nString), buffer + remainderOffset);
+		bufferlen = strlen(buffer);
+		i = remainderOffset -1;
+		sum = 1;
+		num_ops++;
 		}
 
 	    // if we do, is the next character after it a '+'?
@@ -142,22 +136,10 @@ void *adder(void *arg)
 	    // once we have value1, value2 and start and end offsets of the
 	    // expression in buffer, replace it with v1+v2
 	}
-	    label:
-	    	continue;
-	    //perform addition
-	    int sum = value1 + value2;
-	    
-	    //check how many elements in sum
-	    int size = sizeof(sum);
-	    while (size > 0){	   
-		
-		size = size -1;
-	    }
-	   
 
 	// something missing?
 	/* Step 3: free the lock */
-	    pthread_mutex_unlock(&mutexLock);
+	 pthread_mutex_unlock(&mutexLock);
 
 
 	/* Step 6: check progress */
@@ -181,36 +163,73 @@ void *multiplier(void *arg)
     int value1, value2;
     int startOffset, remainderOffset;
     int i;
-
-    return NULL; /* remove this line */
+    int sum;
+    int result;
+    char nString[50];
 
     while (1) {
 		/* Step 3: add mutual exclusion */
 
 
-	startOffset = remainderOffset = -1;
-	value1 = value2 = -1;
-
+	//startOffset = remainderOffset = -1;
+	//value1 = value2 = -1;
+	pthread_mutex_lock(&mutexLock);
 	if (timeToFinish()) {
-	    return NULL;
+		pthread_mutex_unlock(&mutexLock);
+		return NULL;
 	}
 
 	/* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
+	    sum = 0;
 
 	/* Step 2: implement multiplier */
 	for (i = 0; i < bufferlen; i++) {
 	    // same as adder, but v1*v2
+		if (buffer[i] == ';')
+		{
+		break;
+		}
+		if (isNumeric(buffeer[i]))
+		{
+		startOffset = i;
+		value1 = string2int(buffer +i);
+		while (isNumeric(buffer[i]))
+		{
+			i++;
+		}
+		if (buffer[i] != '*' || !isNumeric(buffer[i+1]))
+		{
+			continue;
+		}
+		value2= string2int(buffer + i + 1);
+		result = value1 * value2;
+		do
+		{
+			i++;
+		} while (isNumeric(buffer[i]));
+		remainderOffset = i;
+		int2string(result, nString);
+		strcpy(buffer + startOffset, nString);
+		strcpy(buffer + startOffset + strlen(nString), buffer + remainderOffset);
+		bufferlen = strlen(buffer);
+		i = remainderOffset - 1;
+		sum = 1;
+		num_ops++;
+		}
 	}
 
 	// something missing?
 	/* Step 3: free the lock */
-	
+	    pthread_mutex_unlock(&mutexLock);	
 
 	/* Step 6: check progress */
-
+	    sem_wait(&progress_lock);
+	    progress.multi = sum ? 2 : 1;
+	    sem_post(&progress_lock);
 
 	/* Step 5: let others play */
+	    sched_yield();
 
     }
 }
@@ -223,58 +242,58 @@ void *degrouper(void *arg)
 {
     int bufferlen;
     int i;
-
-    return NULL; /* remove this line */
+    int startOffset, sum;
 
     while (1) {
 
-		/* Step 3: add mutual exclusion */
-	  pthread_mutex_lock(&mutexlock);
+	/* Step 3: add mutual exclusion */
+	 pthread_mutex_lock(&mutexlock);
 	 
 	if (timeToFinish()) {
-	    return NULL;
+		pthread_mutex_unlock(&mutexLock);
+		return NULL;
 	}
 
 	/* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
+	    sum = 0;
 
 	/* Step 2: implement degrouper */
 	for (i = 0; i < bufferlen; i++) {
 	    // check for '(' followed by a naked number followed by ')'
-	    if (buffer[i] =='{' &&& isNumeric(buffer[i+1])){
+	    if (buffer[i] =='(' && isNumeric(buffer[i+1])){
 	    startOffset =i;
 		   do{
-		   i++;
+			   i++;
 		   }while(isNumeric(buffer[i]));
 		    if (buffer[i]!=')'){
-		    i--;
-		    continue;
+			    i--;
+			    continue;
 		    }
 	    }
 		// remove ')' by shifting the tail end of the expression
-		strcpy(buffer+i, buffer+i + 1);
+		strcpy(buffer + i, buffer + i + 1);
 		
 	    // remove '(' by shifting the beginning of the expression
-		strcpy(buffer+startOffset, buffer+startOffset+i);
+		strcpy(buffer + startOffset, buffer + startOffset + 1);
 		bufferlen -=2;
 		i=startOffset;
-		sum =1;
+		sum = 1;
 		num_ops++;
 	}
 
 	// something missing?
 	/* Step 3: free the lock */
 	    pthread_mutex_unlock(&mutexLock);
+
+	/* Step 6: check progress */
 	    sem_wait(&progress_lock);
 	    progress.group = sum ? 2:1;
 	    sem_post(&progress_lock);
-	    sched_yield();
-
-
-	/* Step 6: check progress */
 
 
 	/* Step 5: let others play */
+	     sched_yield();
 
     }
 }
@@ -296,18 +315,22 @@ void *sentinel(void *arg)
     while (1) {
 
 		/* Step 3: add mutual exclusion */
-
-
-	if (timeToFinish()) {
-	    return NULL;
-	}
+	    pthread_mutex_lock(&mutexLock);
+	    if (timeToFinish()) 
+	    {
+		    pthread_mutex_unlock(&mutexLock);
+		    return NULL;
+	    }
 
 	/* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
 
-	for (i = 0; i < bufferlen; i++) {
-	    if (buffer[i] == ';') {
-		if (i == 0) {
+	for (i = 0; i < bufferlen; i++) 
+	{
+	    if (buffer[i] == ';') 
+	    {
+		if (i == 0) 
+		{
 		    printErrorAndExit("Sentinel found empty expression!");
 		} else {
 		    /* null terminate the string */
@@ -328,13 +351,15 @@ void *sentinel(void *arg)
 	// something missing?
 	/* Step 6: check for progress */
 	if(buffer[0]!=0){
-	mpthread_mutex_unlock(&mutexLock);
+		pthread_mutex_unlock(&mutexLock);
 		sem_wait(&progress_lock);
-		if(progress.add && progress.mult && progress.group){
-		if(progress.add >1 || progress.multi >1 || progress.group > 1){
-			menset(&progress, 0, sizeof(struct progress_t));
-		}
-			else{
+		if(progress.add && progress.mult && progress.group)
+		{
+			if(progress.add >1 || progress.multi >1 || progress.group > 1){
+			memset(&progress, 0, sizeof(struct progress_t));
+			}
+			else
+			{
 			printf(stdout, "No Prorgess can be made \n");
 			exit(EXIT_FAILURE);
 			}
@@ -344,7 +369,7 @@ void *sentinel(void *arg)
 		pthread_mutex_unlock(&mutexLock);
 
 	/* Step 5: let others play, too */
-	    schedule yield?
+	    sched_yield();
 	    
 
     }
@@ -354,7 +379,8 @@ void *sentinel(void *arg)
    buffer */
 void *reader(void *arg)
 {
-    while (1) {
+    while (1) 
+    {
 	char tBuffer[100];
 	int currentlen;
 	int newlen;
@@ -368,7 +394,8 @@ void *reader(void *arg)
 	currentlen = strlen(buffer);
 
 	/* if tBuffer comes back with a newline from fgets, remove it */
-	if (tBuffer[newlen - 1] == '\n') {
+	if (tBuffer[newlen - 1] == '\n') 
+	{
 	    /* shift null terminator left */
 	    tBuffer[newlen - 1] = tBuffer[newlen];
 	    newlen--;
@@ -376,20 +403,14 @@ void *reader(void *arg)
 
 	/* -1 for null terminator, -1 for ; separator */
 	free = sizeof(buffer) - currentlen - 2;
-
-	while (free < newlen) {
-		// spinwaiting TO DO
-		tBuffer[newlen - 1] = tBuffer[newlen];
-		newlen--;
-	}
-do{
-	/* Step 3: add mutual exclusion */
-	    pthread_mutex_lock();
+	    do{
+	    /* Step 3: add mutual exclusion */
+	    pthread_mutex_lock(&mutexLock);
 	    currentlen=strlen(buffer);
-	    free = sizeof(buffer)-currentlen-s;
+	    free = sizeof(buffer)-currentlen-2;
 	    pthread_mutex_unlock(&mutexLock);
 	    sched_yield();
-}while(free < newlen);
+	    }while(free < newlen);
 	    pthread_mutex_lock(&mutexLock);
 	    
 
@@ -400,10 +421,12 @@ do{
 	/* Step 6: reset flag variables indicating progress */
 	    sem_wait(&progress_lock);
 	    memset(&progress, 0, sizeof(struct progress_t));
-	    sem
+	    sem_post(&progress_lock);
+	    pthread_mutex_unlock(&mutexLock);
 
 	/* Stop when user enters '.' */
-	if (tBuffer[0] == '.') {
+	if (tBuffer[0] == '.') 
+	{
 	    return NULL;
 	}
     }
