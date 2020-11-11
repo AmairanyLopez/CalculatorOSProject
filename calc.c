@@ -107,9 +107,9 @@ void *adder(void *arg)
 			break;
 		}
 		else if (foundsign == 0){
-			string s1 = to_string(value1);
-			string s2 = to_string(buffer[i]);
-			string s = s1 + s2;
+			char s1 = [to_string(value1)];
+			char s2 = [to_string(buffer[i])];
+			char s = [s1 + s2];
 			int c = stoi(s);
 			strcpy(value1, c);
 			strcpy(buffer, &buffer[i + 1]);
