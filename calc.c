@@ -190,7 +190,7 @@ void *multiplier(void *arg)
 		{
 		break;
 		}
-		if (isNumeric(buffeer[i]))
+		if (isNumeric(buffer[i]))
 		{
 		startOffset = i;
 		value1 = string2int(buffer +i);
@@ -225,7 +225,7 @@ void *multiplier(void *arg)
 
 	/* Step 6: check progress */
 	    sem_wait(&progress_lock);
-	    progress.multi = sum ? 2 : 1;
+	    progress.mult = sum ? 2 : 1;
 	    sem_post(&progress_lock);
 
 	/* Step 5: let others play */
@@ -247,7 +247,7 @@ void *degrouper(void *arg)
     while (1) {
 
 	/* Step 3: add mutual exclusion */
-	 pthread_mutex_lock(&mutexlock);
+	 pthread_mutex_lock(&mutexLock);
 	 
 	if (timeToFinish()) {
 		pthread_mutex_unlock(&mutexLock);
@@ -355,7 +355,7 @@ void *sentinel(void *arg)
 		sem_wait(&progress_lock);
 		if(progress.add && progress.mult && progress.group)
 		{
-			if(progress.add >1 || progress.multi >1 || progress.group > 1){
+			if(progress.add >1 || progress.mult >1 || progress.group > 1){
 			memset(&progress, 0, sizeof(struct progress_t));
 			}
 			else
