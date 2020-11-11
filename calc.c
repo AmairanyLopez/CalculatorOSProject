@@ -74,8 +74,8 @@ void *adder(void *arg)
     int value1, value2;
     int startOffset, remainderOffset;
     int i;
-    bool foundsign = 0;
-    bool endops = 0;
+    int foundsign = 0;
+    int endops = 0;
 
     return NULL; /* remove this line */
 
