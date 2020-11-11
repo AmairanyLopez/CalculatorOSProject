@@ -143,7 +143,7 @@ void *adder(void *arg)
 	    int sum = value1 + value2;
 	    
 	    //check how many elements in sum
-	    size = sizeof(sum);
+	    int size = sizeof(sum);
 	    while (size > 0){	   
 		
 		size = size -1;
