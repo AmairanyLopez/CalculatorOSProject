@@ -74,6 +74,8 @@ void *adder(void *arg)
     int value1, value2;
     int startOffset, remainderOffset;
     int i;
+    bool foundsign = 0;
+    bool endops = 0;
 
     return NULL; /* remove this line */
 
@@ -89,16 +91,65 @@ void *adder(void *arg)
 
 	/* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
+	
 
 	/* Step 2: implement adder */
 	for (i = 0; i < bufferlen; i++) {
 	    // do we have value1 already?  If not, is this a "naked" number?
+		if (value1 == -1){ //change this to found sign late ***
+			strcpy(value1, buffer[i]);
+			strcpy(startOffset, i);
+			break;
+		}
+		else if (buffer[i]== '+'){
+			strcpy(foundsign, 1);
+			strcpy(buffer, &buffer[i + 1]);
+			break;
+		}
+		else if (foundsign == 0){
+			string s1 = to_string(value1);
+			string s2 = to_string(buffer[i]);
+			string s = s1 + s2;
+			int c = stoi(s);
+			strcpy(value1, c);
+			strcpy(buffer, &buffer[i + 1]);
+			break;
+		}
+		else if (!isdigit(buffer[i])){
+			goto label;
+		}
+		else if (value2 == -1){
+			strcpy(value2, buffer[i]);
+			strcpy(remainder0ffset, i);
+			break;
+		}
+		else {
+			string s1 = to_string(value2);
+			string s2 = to_string(buffer[i]);
+			string s = s1 + s2;
+			int c = stoi(s);
+			strcpy(value2, c);
+			strcpy(remainder0ffset, i);
+			break;
+		}
+
 	    // if we do, is the next character after it a '+'?
 	    // if so, is the next one a "naked" number?
-
 	    // once we have value1, value2 and start and end offsets of the
 	    // expression in buffer, replace it with v1+v2
 	}
+	    label:
+	    //perform addition
+	    int sum;
+	    sum = value1 + value2;
+	    
+	    //check how many elements in sum
+	    size = sizeof(sum);
+	    while (size > 0){	   
+		
+		size = size -1
+	    }
+	   
 
 	// something missing?
 	/* Step 3: free the lock */
