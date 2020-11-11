@@ -139,6 +139,7 @@ void *adder(void *arg)
 	    // expression in buffer, replace it with v1+v2
 	}
 	    label:
+	    	continue;
 	    //perform addition
 	    int sum = value1 + value2;
 	    
