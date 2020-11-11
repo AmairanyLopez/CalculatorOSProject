@@ -360,7 +360,7 @@ void *sentinel(void *arg)
 			}
 			else
 			{
-			printf(stdout, "No Prorgess can be made \n");
+			printf(stdout, "No Progress can be made \n");
 			exit(EXIT_FAILURE);
 			}
 		}
