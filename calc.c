@@ -86,16 +86,16 @@ void *adder(void *arg)
     char nString[50];
 
     while (1) {
-	addprogress=1;
+	addprogress=1; //contingecny progress report
 	/* Step 3: add mutual exclusion */
 	startOffset = remainderOffset = -1;
 	value1 = value2 = -1;
 	    
-	pthread_mutex_lock(&mutexLock);
+	pthread_mutex_lock(&mutexLock);   //lock the process while we do the multiply.
 
 	if (timeToFinish()) 
 	{
-	    pthread_mutex_unlock(&mutexLock);
+	    pthread_mutex_unlock(&mutexLock);   //release once we traverse and no other * has been found
 	    return NULL;
 	}
 
@@ -133,7 +133,7 @@ void *adder(void *arg)
 		strcpy((buffer + startOffset + strlen(nString)), (buffer + remainderOffset));
 		bufferlen = strlen(buffer);
 		i = remainderOffset -1;
-		//sum = 1;
+		sum = 1;
 		num_ops++;
 		}
 
@@ -156,7 +156,7 @@ void *adder(void *arg)
 	    }
 	/* Step 6: check progress */
 	    sem_wait(&progress_lock);
-	    progress.add = sum ? 2: 1;
+	    progress.add = sum ? 2: 1; //not getting here
 	    sem_post(&progress_lock);
 	    
 
@@ -183,7 +183,7 @@ void *multiplier(void *arg)
     while (1) {
 		/* Step 3: add mutual exclusion */
 
-	multiprogress=1;
+	multiprogress=1; //secondary progress 
 	startOffset = remainderOffset = -1;
 	value1 = value2 = -1;
 	pthread_mutex_lock(&mutexLock);
