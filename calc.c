@@ -133,7 +133,7 @@ void *adder(void *arg)
 		strcpy((buffer + startOffset + strlen(nString)), (buffer + remainderOffset));
 		bufferlen = strlen(buffer);
 		i = remainderOffset -1;
-		sum = 1;
+		//sum = 1;
 		num_ops++;
 		}
 
