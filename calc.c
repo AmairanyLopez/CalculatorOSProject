@@ -86,10 +86,10 @@ void *adder(void *arg)
     char nString[50];
 
     while (1) {
-
+	addprogress=1;
 	/* Step 3: add mutual exclusion */
-	//startOffset = remainderOffset = -1;
-	//value1 = value2 = -1;
+	startOffset = remainderOffset = -1;
+	value1 = value2 = -1;
 	    
 	pthread_mutex_lock(&mutexLock);
 
@@ -100,18 +100,19 @@ void *adder(void *arg)
 	}
 
 	/* storing this prevents having to recalculate it in the loop */
-	bufferlen = strlen(buffer);
+	bufferlen = (int)strlen(buffer);
 	sum=0;
 
 	/* Step 2: implement adder */
 	for (i = 0; i < bufferlen; i++)
 	{
+		beforelen = bufferlen;
 		if (buffer[i]== ';')
 		{
 		break;
 		}
 		if (isNumeric(buffer[i])){
-		startOffset =1;
+		startOffset =i;
 		value1= string2int(buffer + i);
 		while (isNumeric(buffer[i]))
 		{
