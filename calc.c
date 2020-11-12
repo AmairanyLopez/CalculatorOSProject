@@ -288,10 +288,10 @@ void *degrouper(void *arg)
 		   do{
 			   i++;
 		   }while(isNumeric(buffer[i]));
-		    if (buffer[i]!=')'){
-			    i--;
-			    continue;
-		    }
+		  //  if (buffer[i]!=')'){
+		//	    i--;
+			   // continue;
+		   // }
 	    }
 		// remove ')' by shifting the tail end of the expression
 		strcpy(buffer + i, buffer + i + 1);
