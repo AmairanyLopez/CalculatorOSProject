@@ -111,7 +111,7 @@ void *adder(void *arg)
 		{
 		break;
 		}
-		if (isNumeric(buffer[i])){i
+		if (isNumeric(buffer[i])){
 		startOffset =i;
 		value1= string2int(buffer + i);
 		while (isNumeric(buffer[i]))
