@@ -226,7 +226,7 @@ void *multiplier(void *arg)
 			i++;
 		} while (isNumeric(buffer[i]));
 		remainderOffset = i;
-		//sprintf(nString, "%d", result);
+		sprintf(nString, "%d", result);
 		int2string(result, nString);
 		strcpy(buffer + startOffset, nString);
 		strcpy(buffer + startOffset + strlen(nString), buffer + remainderOffset);
