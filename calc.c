@@ -346,10 +346,10 @@ void *sentinel(void *arg)
 		    return NULL;
 	    }
 
-	if (addprogress == 0 && multiprogress == 0 && degprogress == 0){
-	printf("No Progress can be made\n");
-		exit(EXIT_FAILURE);
-	}
+	//if (addprogress == 0 && multiprogress == 0 && degprogress == 0){
+	//printf("No Progress can be made\n");
+	//	exit(EXIT_FAILURE);
+	//}
 	    
 	    /* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
