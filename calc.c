@@ -307,6 +307,9 @@ void *degrouper(void *arg)
 
 	// something missing?
 	/* Step 3: free the lock */
+	    if(beforelen == bufferlen && bufferlen > 0) {
+	    degprogress = 0;
+	    }
 	    pthread_mutex_unlock(&mutexLock);
 
 	/* Step 6: check progress */
@@ -343,7 +346,12 @@ void *sentinel(void *arg)
 		    return NULL;
 	    }
 
-	/* storing this prevents having to recalculate it in the loop */
+	if (addprogress == 0 && multiprogress == 0 && deprogress == 0){
+	printf("No Progress can be made\n");
+		exit(EXIT_FAILURE);
+	}
+	    
+	    /* storing this prevents having to recalculate it in the loop */
 	bufferlen = strlen(buffer);
 
 	for (i = 0; i < bufferlen; i++) 
