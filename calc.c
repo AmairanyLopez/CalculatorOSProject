@@ -310,8 +310,6 @@ void *sentinel(void *arg)
     int bufferlen;
     int i;
 
-    return NULL; /* remove this line */
-
     while (1) {
 
 		/* Step 3: add mutual exclusion */
