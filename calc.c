@@ -490,7 +490,7 @@ int smp3_main(int argc, char **argv)
 	/* Step 1: we have to join on the ________ thread. */
 
     /* everything is finished, print out the number of operations performed */
-    fprintf(stdout, "Performed a total of %d operations\n", num_ops);
+    fprintf(stdout, "Performed a total of %d operations\n", num_ops-1);
 
 	// TODO destroy semaphores and mutex
 	pthread_mutex_destroy(&mutexLock);
