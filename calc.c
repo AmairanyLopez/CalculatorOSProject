@@ -285,17 +285,6 @@ void *degrouper(void *arg)
 	for (i = 0; i < bufferlen; i++) {
 	    // check for '(' followed by a naked number followed by ')'
 	    if (buffer[i] =='(' && isNumeric(buffer[i+1])){
-		    if (naked == 0){
-		    break;
-		    }
-		    int j = i;
-		    if(bufferlen > 0)
-			    while(j< bufferlen){
-			    if (buffer[j] == '('){
-			    i=j;
-			    }
-			    j++;
-			    }
 	    startOffset =i;
 		   do{
 			   i++;
