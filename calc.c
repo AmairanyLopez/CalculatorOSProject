@@ -183,9 +183,9 @@ void *multiplier(void *arg)
     while (1) {
 		/* Step 3: add mutual exclusion */
 
-
-	//startOffset = remainderOffset = -1;
-	//value1 = value2 = -1;
+	multiprogress=1;
+	startOffset = remainderOffset = -1;
+	value1 = value2 = -1;
 	pthread_mutex_lock(&mutexLock);
 	if (timeToFinish()) {
 		pthread_mutex_unlock(&mutexLock);
@@ -193,18 +193,22 @@ void *multiplier(void *arg)
 	}
 
 	/* storing this prevents having to recalculate it in the loop */
-	bufferlen = strlen(buffer);
+	bufferlen = (int)strlen(buffer);
 	    sum = 0;
 
 	/* Step 2: implement multiplier */
 	for (i = 0; i < bufferlen; i++) {
 	    // same as adder, but v1*v2
+		beforelen = bufferlen;
 		if (buffer[i] == ';')
 		{
 		break;
 		}
 		if (isNumeric(buffer[i]))
 		{
+			if (buffer[i] == '*' && buffer[i+1] == '('){
+			i=i+2;
+			}
 		startOffset = i;
 		value1 = string2int(buffer +i);
 		while (isNumeric(buffer[i]))
@@ -222,15 +226,19 @@ void *multiplier(void *arg)
 			i++;
 		} while (isNumeric(buffer[i]));
 		remainderOffset = i;
+		//sprintf(nString, "%d", result);
 		int2string(result, nString);
 		strcpy(buffer + startOffset, nString);
 		strcpy(buffer + startOffset + strlen(nString), buffer + remainderOffset);
-		bufferlen = strlen(buffer);
+		bufferlen = (int)strlen(buffer);
 		i = remainderOffset - 1;
 		sum = 1;
 		num_ops++;
 		}
 	}
+	    if(strlen(nString) == 0 && bufferlen > 0){
+	    multiprogress =0;
+	    }
 
 	// something missing?
 	/* Step 3: free the lock */
