@@ -302,8 +302,9 @@ void *degrouper(void *arg)
 		bufferlen -=2;
 		i=startOffset;
 		sum = 1;
+		num_ops++;
 	}
-	num_ops++;
+
 
 	// something missing?
 	/* Step 3: free the lock */
