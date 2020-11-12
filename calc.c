@@ -12,9 +12,14 @@ pthread_t sentinelThread;
 
 char buffer[BUF_SIZE];
 int num_ops;
+int beforelen;
+int progress = 1;
+int addprogress = 1;
+int multiprogress = 1;
+int degprogress = 1;
 
 /* Step 3: add mutual exclusion */
-static pthread_mutex_t mutexLock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mutexLock;
 
 /* Step 6: add condition flag varaibles */
 struct progress_t
