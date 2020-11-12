@@ -132,7 +132,7 @@ void *adder(void *arg)
 		strcpy(buffer+ startOffset, nString);
 		strcpy((buffer + startOffset + strlen(nString)), (buffer + remainderOffset));
 		bufferlen = strlen(buffer);
-		i = remainderOffset -1;
+		i = startOffset + (strlen(nString))-1;
 		sum = 1;
 		num_ops++;
 		}
@@ -279,8 +279,7 @@ void *degrouper(void *arg)
 	/* storing this prevents having to recalculate it in the loop */
 	bufferlen = (int)strlen(buffer);
 	    sum = 0;
-	    int naked = 1;
-
+	  
 	/* Step 2: implement degrouper */
 	for (i = 0; i < bufferlen; i++) {
 	    // check for '(' followed by a naked number followed by ')'
