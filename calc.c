@@ -19,7 +19,7 @@ int multiprogress = 1;
 int degprogress = 1;
 
 /* Step 3: add mutual exclusion */
-static pthread_mutex_t mutexLock;
+static pthread_mutex_t mutexLock= PTHREAD_MUTEX_INITIALIZER;
 
 /* Step 6: add condition flag varaibles */
 struct progress_t
