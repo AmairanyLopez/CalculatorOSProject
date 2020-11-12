@@ -346,7 +346,7 @@ void *sentinel(void *arg)
 		    return NULL;
 	    }
 
-	if (addprogress == 0 && multiprogress == 0 && deprogress == 0){
+	if (addprogress == 0 && multiprogress == 0 && degprogress == 0){
 	printf("No Progress can be made\n");
 		exit(EXIT_FAILURE);
 	}
