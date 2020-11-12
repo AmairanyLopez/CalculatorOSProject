@@ -13,7 +13,7 @@ pthread_t sentinelThread;
 char buffer[BUF_SIZE];
 int num_ops;
 int beforelen;
-int progress = 1;
+int progresss = 1;
 int addprogress = 1;
 int multiprogress = 1;
 int degprogress = 1;
