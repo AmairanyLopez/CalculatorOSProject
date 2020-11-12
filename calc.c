@@ -148,10 +148,17 @@ void *adder(void *arg)
 	 pthread_mutex_unlock(&mutexLock);
 
 
+	    
+	    //another check progress
+	    if (strlen(nString)== 0 && bufferlen > 0)
+	    {
+	    addprogress=0;
+	    }
 	/* Step 6: check progress */
 	    sem_wait(&progress_lock);
 	    progress.add = sum ? 2: 1;
 	    sem_post(&progress_lock);
+	    
 
 
 	/* Step 5: let others play */
