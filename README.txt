@@ -120,6 +120,10 @@ Q1: At this point, your solution does not contain any synchronization or
 mutual exclusion.  Give an example of and explain a possible
 synchronization error that could occur in this code. Be specific.
 
+We could have multiple threads edit the same place for example if there is a place that requres actions from multiple threads and they both read the current
+information to perform their actions, and then both write their answer messing up with the answer from the other thread. We need threads to access the 
+critical area by themselves to edit their action and then allow another thread to do their part with the new information.
+
 Q2: Suppose we implement correct synchronization and mutual exclusion
 for all of the threads.  If our three functions were to operate on all
 expression in the buffer at once (not just the first expression), would
